@@ -1,6 +1,6 @@
 package com.pastore.fabrick.bankaccount.contract;
 
-import com.pastore.fabrick.bankaccount.client.contract.AccountResponse;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickAccountResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class GetAccountResponse {
-    private AccountResponse account;
+    private FabrickAccountResponse account;
 }

@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <changeSet author="savio pastore" id="20220529152036-create-transactions-table">
+    <sql>
+      CREATE TABLE `transactions` (
+      `transaction_id` varchar(80) PRIMARY KEY,
+      `operation_id` varchar(80),
+      `accounting_date` varchar(80),
+      `value_date` varchar(80),
+      `type` varchar(80),
+      `amount` bigint,
+      `currency` varchar(80),
+      `description` varchar(80)
+      );
+    </sql>
+    <rollback>
+      DROP TABLE `transactions`;
+    </rollback>
+  </changeSet>
+</databaseChangeLog>

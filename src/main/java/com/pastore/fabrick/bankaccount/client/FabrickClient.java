@@ -1,8 +1,11 @@
 package com.pastore.fabrick.bankaccount.client;
 
-import com.pastore.fabrick.bankaccount.client.contract.AccountResponse;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickAccountResponse;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickBalance;
 import com.pastore.fabrick.bankaccount.client.contract.FabrickMoneyTransferRequest;
-import com.pastore.fabrick.bankaccount.client.contract.ResultSet;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickResult;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickResultList;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickTransactions;
 import com.pastore.fabrick.bankaccount.exception.MoneyTransferKoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,28 +35,47 @@ public class FabrickClient {
         this.authSchema = authSchema;
     }
 
-    public ResultSet<AccountResponse> getAccount() {
+    public FabrickResultList<FabrickAccountResponse> getAccount() {
         return restTemplate.exchange(baseUrl + "/api/gbs/banking/v4.0/accounts",
                 HttpMethod.GET, new HttpEntity<>(getHeader()),
-                new ParameterizedTypeReference<ResultSet<AccountResponse>>(){}).getBody();
+                new ParameterizedTypeReference<FabrickResultList<FabrickAccountResponse>>() {
+                }).getBody();
     }
 
     public void moneyTransfer(FabrickMoneyTransferRequest fabrickMoneyTransferRequest, String accountId) {
         var header = getHeader();
         header.set("X-Time-Zone", "Europe/Rome");
         try {
-            restTemplate.exchange(baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers", accountId),
+            restTemplate.exchange(baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers",
+                    accountId),
                     HttpMethod.POST, new HttpEntity<>(fabrickMoneyTransferRequest, header),
                     Void.class);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new MoneyTransferKoException();
         }
+    }
+
+    public FabrickResultList<FabrickTransactions> getTransactions(String fromDate, String toDate, String accountId) {
+        return restTemplate.exchange(baseUrl +
+                        String.format("/api/gbs/banking/v4.0/accounts/%s/transactions?fromAccountingDate=%s&toAccountingDate=%s"
+                                , accountId, fromDate, toDate),
+                HttpMethod.GET, new HttpEntity<>(getHeader()),
+                new ParameterizedTypeReference<FabrickResultList<FabrickTransactions>>() {
+                }).getBody();
+    }
+
+    public FabrickResult<FabrickBalance> getBalance(String accountId) {
+        return restTemplate.exchange(baseUrl +
+                        String.format("/api/gbs/banking/v4.0/accounts/%s/balance", accountId),
+                HttpMethod.GET, new HttpEntity<>(getHeader()),
+                new ParameterizedTypeReference<FabrickResult<FabrickBalance>>() {
+                }).getBody();
     }
 
     private HttpHeaders getHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("apiKey",  apiKey);
+        headers.set("apiKey", apiKey);
         headers.set("Auth-Schema", authSchema);
         return headers;
     }

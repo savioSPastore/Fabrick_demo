@@ -8,20 +8,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ResultSet<T> {
-
+@NoArgsConstructor
+@Builder(toBuilder = true)
+public class FabrickResult<T> {
     private String status;
     private List<String> error;
-    private Payload<T> payload;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Payload<T> {
-        private List<T> list;
-    }
+    private T payload;
 }

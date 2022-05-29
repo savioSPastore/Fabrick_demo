@@ -11,7 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AccountResponse {
+public class FabrickAccountResponse {
     private String accountId;
     private String iban;
     private String abiCode;

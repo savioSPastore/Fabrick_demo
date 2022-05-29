@@ -6,7 +6,6 @@ import com.pastore.fabrick.bankaccount.client.contract.FabrickMoneyTransferReque
 import com.pastore.fabrick.bankaccount.client.contract.FabrickResult;
 import com.pastore.fabrick.bankaccount.client.contract.FabrickResultList;
 import com.pastore.fabrick.bankaccount.client.contract.FabrickTransactions;
-import com.pastore.fabrick.bankaccount.exception.MoneyTransferKoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,14 +44,10 @@ public class FabrickClient {
     public void moneyTransfer(FabrickMoneyTransferRequest fabrickMoneyTransferRequest, String accountId) {
         var header = getHeader();
         header.set("X-Time-Zone", "Europe/Rome");
-        try {
             restTemplate.exchange(baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers",
                     accountId),
                     HttpMethod.POST, new HttpEntity<>(fabrickMoneyTransferRequest, header),
                     Void.class);
-        } catch (Exception e) {
-            throw new MoneyTransferKoException();
-        }
     }
 
     public FabrickResultList<FabrickTransactions> getTransactions(String fromDate, String toDate, String accountId) {

@@ -1,5 +1,6 @@
 package com.pastore.fabrick.bankaccount.client.contract;
 
+import com.pastore.fabrick.bankaccount.contract.MoneyTransferRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,11 +27,27 @@ public class FabrickMoneyTransferRequest {
         private String name;
         private Account account;
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder(toBuilder = true)
     public static class Account {
         private String bicCode;
+    }
+
+    public static FabrickMoneyTransferRequest from(MoneyTransferRequest moneyTransferRequest) {
+        return FabrickMoneyTransferRequest.builder()
+                .executionDate(moneyTransferRequest.getExecutionDate())
+                .currency(moneyTransferRequest.getCurrency())
+                .amount(Long.getLong(moneyTransferRequest.getAmount()))
+                .creditor(FabrickMoneyTransferRequest.Creditor
+                        .builder()
+                        .name(moneyTransferRequest.getReceiverName())
+                        .account(FabrickMoneyTransferRequest.Account.builder()
+                                .bicCode("SELBIT2BXXX")
+                                .build())
+                        .build())
+                .build();
     }
 }

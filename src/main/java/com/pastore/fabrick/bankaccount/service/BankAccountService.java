@@ -11,6 +11,7 @@ import com.pastore.fabrick.bankaccount.contract.GetAccountResponse;
 import com.pastore.fabrick.bankaccount.contract.MoneyTransferRequest;
 import com.pastore.fabrick.bankaccount.entity.Transaction;
 import com.pastore.fabrick.bankaccount.entity.TransactionRepository;
+import com.pastore.fabrick.bankaccount.exception.MoneyTransferKoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,19 +38,12 @@ public class BankAccountService {
     }
 
     public void moneyTransfer(MoneyTransferRequest moneyTransferRequest) {
-        FabrickMoneyTransferRequest fabrickMoneyTransferRequest = FabrickMoneyTransferRequest.builder()
-                .executionDate(moneyTransferRequest.getExecutionDate())
-                .currency(moneyTransferRequest.getCurrency())
-                .amount(Long.getLong(moneyTransferRequest.getAmount()))
-                .creditor(FabrickMoneyTransferRequest.Creditor
-                        .builder()
-                        .name(moneyTransferRequest.getReceiverName())
-                        .account(FabrickMoneyTransferRequest.Account.builder()
-                                .bicCode("SELBIT2BXXX")
-                                .build())
-                        .build())
-                .build();
-        fabrickClient.moneyTransfer(fabrickMoneyTransferRequest, moneyTransferRequest.getAccountId());
+        FabrickMoneyTransferRequest fabrickMoneyTransferRequest = FabrickMoneyTransferRequest.from(moneyTransferRequest);
+        try {
+            fabrickClient.moneyTransfer(fabrickMoneyTransferRequest, moneyTransferRequest.getAccountId());
+        } catch (Exception e) {
+            throw new MoneyTransferKoException();
+        }
     }
 
     public FabrickResultList<FabrickTransactions> getTransactions(String accountId, String fromDate, String toDate) {

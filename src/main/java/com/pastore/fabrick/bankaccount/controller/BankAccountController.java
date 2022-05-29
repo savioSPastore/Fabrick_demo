@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 public class BankAccountController {
 
@@ -36,7 +38,7 @@ public class BankAccountController {
     }
 
     @PostMapping("/fabrick/demo/api/v1/money-transfer")
-    public void moneyTransfer(@RequestBody MoneyTransferRequest moneyTransferRequest) {
+    public void moneyTransfer(@RequestBody @Valid MoneyTransferRequest moneyTransferRequest) {
         bankAccountService.moneyTransfer(moneyTransferRequest);
     }
 

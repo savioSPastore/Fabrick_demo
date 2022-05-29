@@ -2,7 +2,9 @@ package com.pastore.fabrick.bankaccount.service;
 
 import com.pastore.fabrick.bankaccount.client.FabrickClient;
 import com.pastore.fabrick.bankaccount.client.contract.AccountResponse;
+import com.pastore.fabrick.bankaccount.client.contract.FabrickMoneyTransferRequest;
 import com.pastore.fabrick.bankaccount.contract.GetAccountResponse;
+import com.pastore.fabrick.bankaccount.contract.MoneyTransferRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +24,21 @@ public class BankAccountService {
                 .findFirst()
                 .orElseGet(AccountResponse::new))
                 .build();
+    }
+
+    public void moneyTransfer(MoneyTransferRequest moneyTransferRequest) {
+        FabrickMoneyTransferRequest fabrickMoneyTransferRequest = FabrickMoneyTransferRequest.builder()
+                .executionDate(moneyTransferRequest.getExecutionDate())
+                .currency(moneyTransferRequest.getCurrency())
+                .amount(Long.getLong(moneyTransferRequest.getAmount()))
+                .creditor(FabrickMoneyTransferRequest.Creditor
+                        .builder()
+                        .name(moneyTransferRequest.getReceiverName())
+                        .account(FabrickMoneyTransferRequest.Account.builder()
+                                .bicCode("SELBIT2BXXX")
+                                .build())
+                        .build())
+                .build();
+        fabrickClient.moneyTransfer(fabrickMoneyTransferRequest, moneyTransferRequest.getAccountId());
     }
 }
